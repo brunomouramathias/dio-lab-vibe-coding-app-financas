@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VibeWallet - Protótipo</title>
+    <title>VibeWallet - Protótipo Interativo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -51,106 +51,159 @@
         .btn-hover:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(179, 102, 255, 0.3);
+            cursor: pointer;
         }
+        
+        /* Oculta conteúdos */
+        .hidden-tab { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div class="mobile-frame p-6 relative">
-        <!-- Header -->
-        <header class="flex justify-between items-center mb-8 mt-4">
-            <div>
-                <p class="text-sm text-gray-400">Olá, Bruno! 👋</p>
-                <h1 class="text-2xl font-bold tracking-wide">Vibe<span class="neon-purple-text">Wallet</span></h1>
+    <div class="mobile-frame relative">
+        
+        <!-- === TAB: HOME === -->
+        <div id="tab-home" class="p-6">
+            <!-- Header -->
+            <header class="flex justify-between items-center mb-8 mt-4">
+                <div>
+                    <p class="text-sm text-gray-400">Olá, Bruno! 👋</p>
+                    <h1 class="text-2xl font-bold tracking-wide">Vibe<span class="neon-purple-text">Wallet</span></h1>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-600 to-blue-500 p-1 cursor-pointer" onclick="switchTab('profile')">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Bruno" alt="Profile" class="w-full h-full rounded-full bg-black">
+                </div>
+            </header>
+
+            <!-- Balance Card -->
+            <div class="glass-card p-6 mb-6 relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-purple-600 rounded-full blur-3xl opacity-20"></div>
+                <p class="text-gray-300 text-sm mb-1">Saldo Disponível</p>
+                <h2 class="text-4xl font-bold mb-4">R$ 4.250<span class="text-xl text-gray-500">,00</span></h2>
+                
+                <div class="flex gap-4">
+                    <button onclick="showModal()" class="flex-1 bg-[#b366ff] text-black font-semibold py-3 rounded-xl btn-hover">
+                        + Adicionar
+                    </button>
+                    <button onclick="showModal()" class="flex-1 bg-white/10 text-white font-semibold py-3 rounded-xl btn-hover">
+                        Transferir
+                    </button>
+                </div>
             </div>
-            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-600 to-blue-500 p-1">
+
+            <!-- Vibe Check AI -->
+            <div class="glass-card p-5 mb-8 border-l-4 border-l-[#00ff9d]">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-xl">🤖</span>
+                    <h3 class="font-semibold text-[#00ff9d]">Vibe Check Semanal</h3>
+                </div>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    Sua vibe está ótima essa semana! Você gastou <strong>20% a menos</strong> em Delivery. Continue assim e você vai bater a meta da viagem rapidinho! ✈️
+                </p>
+            </div>
+
+            <!-- Chart -->
+            <h3 class="text-lg font-semibold mb-4">Seus Gastos</h3>
+            <div class="glass-card p-4 mb-8 flex justify-center">
+                <div class="w-48 h-48">
+                    <canvas id="expensesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <h3 class="text-lg font-semibold mb-4">Últimas Transações</h3>
+            <div class="space-y-4 mb-24">
+                <div onclick="showModal()" class="flex items-center justify-between p-3 glass-card btn-hover cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-xl">🍕</div>
+                        <div>
+                            <p class="font-semibold">iFood</p>
+                            <p class="text-xs text-gray-400">Alimentação</p>
+                        </div>
+                    </div>
+                    <p class="font-bold neon-red-text">- R$ 45,90</p>
+                </div>
+                
+                <div onclick="showModal()" class="flex items-center justify-between p-3 glass-card btn-hover cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-xl">💰</div>
+                        <div>
+                            <p class="font-semibold">Pix Recebido</p>
+                            <p class="text-xs text-gray-400">João Silva</p>
+                        </div>
+                    </div>
+                    <p class="font-bold neon-green-text">+ R$ 150,00</p>
+                </div>
+
+                <div onclick="showModal()" class="flex items-center justify-between p-3 glass-card btn-hover cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-xl">🎬</div>
+                        <div>
+                            <p class="font-semibold">Netflix</p>
+                            <p class="text-xs text-gray-400">Assinaturas</p>
+                        </div>
+                    </div>
+                    <p class="font-bold neon-red-text">- R$ 39,90</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- === TAB: GRÁFICOS === -->
+        <div id="tab-charts" class="hidden-tab p-6 h-full flex flex-col justify-center items-center pb-20">
+            <h2 class="text-2xl font-bold mb-8">Análise Detalhada</h2>
+            <div class="glass-card p-6 w-full flex justify-center mb-8">
+                <div class="w-56 h-56">
+                    <canvas id="expensesChart2"></canvas>
+                </div>
+            </div>
+            <p class="text-center text-gray-400">A maior parte do seu orçamento foi direcionada para <strong>Alimentação (45%)</strong>.</p>
+        </div>
+
+        <!-- === TAB: PERFIL === -->
+        <div id="tab-profile" class="hidden-tab p-6 h-full flex flex-col items-center pt-20 pb-20">
+            <div class="w-32 h-32 rounded-full bg-gradient-to-tr from-purple-600 to-blue-500 p-1 mb-6">
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Bruno" alt="Profile" class="w-full h-full rounded-full bg-black">
             </div>
-        </header>
-
-        <!-- Balance Card -->
-        <div class="glass-card p-6 mb-6 relative overflow-hidden">
-            <div class="absolute -right-10 -top-10 w-32 h-32 bg-purple-600 rounded-full blur-3xl opacity-20"></div>
-            <p class="text-gray-300 text-sm mb-1">Saldo Disponível</p>
-            <h2 class="text-4xl font-bold mb-4">R$ 4.250<span class="text-xl text-gray-500">,00</span></h2>
+            <h2 class="text-3xl font-bold mb-2">Bruno Moura</h2>
+            <p class="text-gray-400 mb-8">Desenvolvedor & Vibe Coder</p>
             
-            <div class="flex gap-4">
-                <button class="flex-1 bg-[#b366ff] text-black font-semibold py-3 rounded-xl btn-hover">
-                    + Adicionar
+            <div class="w-full space-y-4">
+                <button onclick="showModal()" class="w-full text-left p-4 glass-card btn-hover flex justify-between items-center">
+                    <span>Configurações da Conta</span>
+                    <span>⚙️</span>
                 </button>
-                <button class="flex-1 bg-white/10 text-white font-semibold py-3 rounded-xl btn-hover">
-                    Transferir
+                <button onclick="showModal()" class="w-full text-left p-4 glass-card btn-hover flex justify-between items-center">
+                    <span>Metas Mensais</span>
+                    <span>🎯</span>
+                </button>
+                <button onclick="showModal()" class="w-full text-left p-4 glass-card btn-hover flex justify-between items-center text-red-400">
+                    <span>Sair do App</span>
+                    <span>🚪</span>
                 </button>
             </div>
         </div>
 
-        <!-- Vibe Check AI -->
-        <div class="glass-card p-5 mb-8 border-l-4 border-l-[#00ff9d]">
-            <div class="flex items-center gap-3 mb-2">
-                <span class="text-xl">🤖</span>
-                <h3 class="font-semibold text-[#00ff9d]">Vibe Check Semanal</h3>
-            </div>
-            <p class="text-sm text-gray-300 leading-relaxed">
-                Sua vibe está ótima essa semana! Você gastou <strong>20% a menos</strong> em Delivery. Continue assim e você vai bater a meta da viagem rapidinho! ✈️
-            </p>
-        </div>
-
-        <!-- Chart -->
-        <h3 class="text-lg font-semibold mb-4">Seus Gastos</h3>
-        <div class="glass-card p-4 mb-8 flex justify-center">
-            <div class="w-48 h-48">
-                <canvas id="expensesChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Recent Transactions -->
-        <h3 class="text-lg font-semibold mb-4">Últimas Transações</h3>
-        <div class="space-y-4 mb-20">
-            <div class="flex items-center justify-between p-3 glass-card btn-hover cursor-pointer">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-xl">🍕</div>
-                    <div>
-                        <p class="font-semibold">iFood</p>
-                        <p class="text-xs text-gray-400">Alimentação</p>
-                    </div>
-                </div>
-                <p class="font-bold neon-red-text">- R$ 45,90</p>
-            </div>
-            
-            <div class="flex items-center justify-between p-3 glass-card btn-hover cursor-pointer">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-xl">💰</div>
-                    <div>
-                        <p class="font-semibold">Pix Recebido</p>
-                        <p class="text-xs text-gray-400">João Silva</p>
-                    </div>
-                </div>
-                <p class="font-bold neon-green-text">+ R$ 150,00</p>
-            </div>
-
-            <div class="flex items-center justify-between p-3 glass-card btn-hover cursor-pointer">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-xl">🎬</div>
-                    <div>
-                        <p class="font-semibold">Netflix</p>
-                        <p class="text-xs text-gray-400">Assinaturas</p>
-                    </div>
-                </div>
-                <p class="font-bold neon-red-text">- R$ 39,90</p>
+        <!-- === MODAL FUNCIONALIDADE EM BREVE === -->
+        <div id="action-modal" class="hidden absolute inset-0 bg-black/80 flex justify-center items-center z-50">
+            <div class="glass-card p-8 w-10/12 text-center border-purple-500">
+                <div class="text-4xl mb-4">🚧</div>
+                <h3 class="text-xl font-bold mb-2">Ação Simulada!</h3>
+                <p class="text-sm text-gray-300 mb-6">Este botão clicou direitinho, mas lembre-se: este é apenas o protótipo visual (frontend) criado para o desafio da DIO.</p>
+                <button onclick="closeModal()" class="bg-[#b366ff] text-black font-semibold py-3 px-6 rounded-xl w-full btn-hover">Incrível, entendi!</button>
             </div>
         </div>
         
-        <!-- Bottom Navigation -->
-        <div class="absolute bottom-0 left-0 w-full glass-card rounded-t-3xl rounded-b-none border-b-0 p-5 flex justify-between items-center px-8 bg-[#121214]/90">
-            <div class="text-[#b366ff] flex flex-col items-center cursor-pointer">
+        <!-- === BOTTOM NAVIGATION === -->
+        <div class="absolute bottom-0 left-0 w-full glass-card rounded-t-3xl rounded-b-none border-b-0 p-5 flex justify-between items-center px-8 bg-[#121214]/95 backdrop-blur-md z-40">
+            <div id="nav-home" class="nav-btn text-[#b366ff] flex flex-col items-center cursor-pointer" onclick="switchTab('home')">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span class="text-xs font-semibold">Home</span>
             </div>
-            <div class="text-gray-500 flex flex-col items-center cursor-pointer hover:text-white transition-colors">
+            <div id="nav-charts" class="nav-btn text-gray-500 flex flex-col items-center cursor-pointer hover:text-[#b366ff] transition-colors" onclick="switchTab('charts')">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 <span class="text-xs">Gráficos</span>
             </div>
-            <div class="text-gray-500 flex flex-col items-center cursor-pointer hover:text-white transition-colors">
+            <div id="nav-profile" class="nav-btn text-gray-500 flex flex-col items-center cursor-pointer hover:text-[#b366ff] transition-colors" onclick="switchTab('profile')">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 <span class="text-xs">Perfil</span>
             </div>
@@ -158,31 +211,67 @@
     </div>
 
     <script>
+        // Logica das Abas
+        function switchTab(tabId) {
+            // Esconde todas as abas
+            document.getElementById('tab-home').classList.add('hidden-tab');
+            document.getElementById('tab-charts').classList.add('hidden-tab');
+            document.getElementById('tab-profile').classList.add('hidden-tab');
+            
+            // Remove cor roxa dos botões de navegação
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('text-[#b366ff]');
+                el.classList.add('text-gray-500');
+            });
+
+            // Mostra a aba correta e colore o botão
+            document.getElementById('tab-' + tabId).classList.remove('hidden-tab');
+            document.getElementById('nav-' + tabId).classList.remove('text-gray-500');
+            document.getElementById('nav-' + tabId).classList.add('text-[#b366ff]');
+        }
+
+        // Lógica do Modal
+        function showModal() {
+            document.getElementById('action-modal').classList.remove('hidden');
+        }
+        function closeModal() {
+            document.getElementById('action-modal').classList.add('hidden');
+        }
+
         // Configuração do Gráfico (Chart.js)
-        const ctx = document.getElementById('expensesChart').getContext('2d');
-        new Chart(ctx, {
+        const chartData = {
+            labels: ['Alimentação', 'Transporte', 'Lazer', 'Outros'],
+            datasets: [{
+                data: [45, 25, 20, 10],
+                backgroundColor: [
+                    '#ff4d4d', // Coral Red
+                    '#00ff9d', // Neon Green
+                    '#b366ff', // Neon Purple
+                    '#4a4a52'  // Gray
+                ],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        };
+
+        const chartOptions = {
+            responsive: true,
+            cutout: '75%',
+            plugins: { legend: { display: false } }
+        };
+
+        // Renderiza no Home
+        new Chart(document.getElementById('expensesChart').getContext('2d'), {
             type: 'doughnut',
-            data: {
-                labels: ['Alimentação', 'Transporte', 'Lazer', 'Outros'],
-                datasets: [{
-                    data: [45, 25, 20, 10],
-                    backgroundColor: [
-                        '#ff4d4d', // Coral Red
-                        '#00ff9d', // Neon Green
-                        '#b366ff', // Neon Purple
-                        '#4a4a52'  // Gray
-                    ],
-                    borderWidth: 0,
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                cutout: '75%',
-                plugins: {
-                    legend: { display: false }
-                }
-            }
+            data: chartData,
+            options: chartOptions
+        });
+
+        // Renderiza na aba Gráficos
+        new Chart(document.getElementById('expensesChart2').getContext('2d'), {
+            type: 'doughnut',
+            data: chartData,
+            options: chartOptions
         });
     </script>
 </body>
