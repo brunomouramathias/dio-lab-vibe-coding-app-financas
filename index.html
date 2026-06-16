@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VibeWallet - Protótipo Interativo</title>
+    <title>VibeWallet - App Funcional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,7 +18,6 @@
             min-height: 100vh;
             margin: 0;
         }
-        /* Simula a tela de um celular */
         .mobile-frame {
             width: 390px;
             height: 844px;
@@ -30,7 +29,6 @@
             overflow-x: hidden;
             position: relative;
         }
-        /* Oculta barra de rolagem */
         .mobile-frame::-webkit-scrollbar { display: none; }
         
         .glass-card {
@@ -45,22 +43,50 @@
         .neon-green-text { color: #00ff9d; }
         .neon-red-text { color: #ff4d4d; }
         
-        .btn-hover {
-            transition: all 0.3s ease;
-        }
+        .btn-hover { transition: all 0.3s ease; }
         .btn-hover:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(179, 102, 255, 0.3);
             cursor: pointer;
         }
-        
-        /* Oculta conteúdos */
         .hidden-tab { display: none !important; }
+        
+        input, select {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 5px;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: #b366ff;
+        }
     </style>
 </head>
 <body>
 
-    <div class="mobile-frame relative">
+    <!-- Login Screen -->
+    <div id="login-screen" class="mobile-frame flex flex-col justify-center items-center p-6 hidden-tab">
+        <h1 class="text-4xl font-bold tracking-wide mb-2">Vibe<span class="neon-purple-text">Wallet</span></h1>
+        <p class="text-gray-400 mb-8 text-center">Seu assistente financeiro inteligente.</p>
+        <div class="w-full space-y-4">
+            <div>
+                <label class="text-sm text-gray-300">E-mail</label>
+                <input type="email" value="bruno@email.com" readonly class="text-gray-500">
+            </div>
+            <div>
+                <label class="text-sm text-gray-300">Senha</label>
+                <input type="password" value="********" readonly class="text-gray-500">
+            </div>
+            <button onclick="login()" class="bg-[#b366ff] text-black font-bold py-3 w-full rounded-xl btn-hover mt-4">Entrar</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" class="mobile-frame relative">
         
         <!-- === TAB: HOME === -->
         <div id="tab-home" class="p-6">
@@ -71,7 +97,7 @@
                     <h1 class="text-2xl font-bold tracking-wide">Vibe<span class="neon-purple-text">Wallet</span></h1>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-purple-600 to-blue-500 p-1 cursor-pointer" onclick="switchTab('profile')">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Bruno" alt="Profile" class="w-full h-full rounded-full bg-black">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" class="w-full h-full rounded-full bg-black">
                 </div>
             </header>
 
@@ -79,14 +105,14 @@
             <div class="glass-card p-6 mb-6 relative overflow-hidden">
                 <div class="absolute -right-10 -top-10 w-32 h-32 bg-purple-600 rounded-full blur-3xl opacity-20"></div>
                 <p class="text-gray-300 text-sm mb-1">Saldo Disponível</p>
-                <h2 class="text-4xl font-bold mb-4">R$ 4.250<span class="text-xl text-gray-500">,00</span></h2>
+                <h2 class="text-4xl font-bold mb-4" id="display-balance">R$ 4.250,00</h2>
                 
                 <div class="flex gap-4">
-                    <button onclick="showModal()" class="flex-1 bg-[#b366ff] text-black font-semibold py-3 rounded-xl btn-hover">
+                    <button onclick="openTransactionModal('income')" class="flex-1 bg-[#b366ff] text-black font-semibold py-3 rounded-xl btn-hover">
                         + Adicionar
                     </button>
-                    <button onclick="showModal()" class="flex-1 bg-white/10 text-white font-semibold py-3 rounded-xl btn-hover">
-                        Transferir
+                    <button onclick="openTransactionModal('expense')" class="flex-1 bg-white/10 text-white font-semibold py-3 rounded-xl btn-hover">
+                        - Gastar
                     </button>
                 </div>
             </div>
@@ -112,39 +138,8 @@
 
             <!-- Recent Transactions -->
             <h3 class="text-lg font-semibold mb-4">Últimas Transações</h3>
-            <div class="space-y-4 mb-24">
-                <div onclick="showModal()" class="flex items-center justify-between p-3 glass-card btn-hover cursor-pointer">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-xl">🍕</div>
-                        <div>
-                            <p class="font-semibold">iFood</p>
-                            <p class="text-xs text-gray-400">Alimentação</p>
-                        </div>
-                    </div>
-                    <p class="font-bold neon-red-text">- R$ 45,90</p>
-                </div>
-                
-                <div onclick="showModal()" class="flex items-center justify-between p-3 glass-card btn-hover cursor-pointer">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-xl">💰</div>
-                        <div>
-                            <p class="font-semibold">Pix Recebido</p>
-                            <p class="text-xs text-gray-400">João Silva</p>
-                        </div>
-                    </div>
-                    <p class="font-bold neon-green-text">+ R$ 150,00</p>
-                </div>
-
-                <div onclick="showModal()" class="flex items-center justify-between p-3 glass-card btn-hover cursor-pointer">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-xl">🎬</div>
-                        <div>
-                            <p class="font-semibold">Netflix</p>
-                            <p class="text-xs text-gray-400">Assinaturas</p>
-                        </div>
-                    </div>
-                    <p class="font-bold neon-red-text">- R$ 39,90</p>
-                </div>
+            <div id="transactions-list" class="space-y-4 mb-24">
+                <!-- Transactions will be rendered here by JS -->
             </div>
         </div>
 
@@ -156,40 +151,62 @@
                     <canvas id="expensesChart2"></canvas>
                 </div>
             </div>
-            <p class="text-center text-gray-400">A maior parte do seu orçamento foi direcionada para <strong>Alimentação (45%)</strong>.</p>
+            <p class="text-center text-gray-400" id="chart-insight">O gráfico é atualizado automaticamente conforme você adiciona novas transações.</p>
         </div>
 
         <!-- === TAB: PERFIL === -->
         <div id="tab-profile" class="hidden-tab p-6 h-full flex flex-col items-center pt-20 pb-20">
             <div class="w-32 h-32 rounded-full bg-gradient-to-tr from-purple-600 to-blue-500 p-1 mb-6">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Bruno" alt="Profile" class="w-full h-full rounded-full bg-black">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" class="w-full h-full rounded-full bg-black">
             </div>
             <h2 class="text-3xl font-bold mb-2">Bruno Moura</h2>
             <p class="text-gray-400 mb-8">Desenvolvedor & Vibe Coder</p>
             
             <div class="w-full space-y-4">
-                <button onclick="showModal()" class="w-full text-left p-4 glass-card btn-hover flex justify-between items-center">
+                <button onclick="alert('Configurações salvas!')" class="w-full text-left p-4 glass-card btn-hover flex justify-between items-center">
                     <span>Configurações da Conta</span>
                     <span>⚙️</span>
                 </button>
-                <button onclick="showModal()" class="w-full text-left p-4 glass-card btn-hover flex justify-between items-center">
+                <button onclick="alert('Sua meta mensal é de R$ 3.000!')" class="w-full text-left p-4 glass-card btn-hover flex justify-between items-center">
                     <span>Metas Mensais</span>
                     <span>🎯</span>
                 </button>
-                <button onclick="showModal()" class="w-full text-left p-4 glass-card btn-hover flex justify-between items-center text-red-400">
+                <button onclick="logout()" class="w-full text-left p-4 glass-card btn-hover flex justify-between items-center text-red-400">
                     <span>Sair do App</span>
                     <span>🚪</span>
                 </button>
             </div>
         </div>
 
-        <!-- === MODAL FUNCIONALIDADE EM BREVE === -->
-        <div id="action-modal" class="hidden absolute inset-0 bg-black/80 flex justify-center items-center z-50">
-            <div class="glass-card p-8 w-10/12 text-center border-purple-500">
-                <div class="text-4xl mb-4">🚧</div>
-                <h3 class="text-xl font-bold mb-2">Ação Simulada!</h3>
-                <p class="text-sm text-gray-300 mb-6">Este botão clicou direitinho, mas lembre-se: este é apenas o protótipo visual (frontend) criado para o desafio da DIO.</p>
-                <button onclick="closeModal()" class="bg-[#b366ff] text-black font-semibold py-3 px-6 rounded-xl w-full btn-hover">Incrível, entendi!</button>
+        <!-- === MODAL NOVA TRANSAÇÃO === -->
+        <div id="transaction-modal" class="hidden absolute inset-0 bg-black/80 flex justify-end flex-col z-50">
+            <div class="glass-card p-6 w-full rounded-t-3xl rounded-b-none border-b-0 bg-[#121214]">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold" id="modal-title">Nova Transação</h3>
+                    <button onclick="closeTransactionModal()" class="text-gray-400 text-2xl">&times;</button>
+                </div>
+                
+                <div class="space-y-4">
+                    <input type="hidden" id="trans-type" value="expense">
+                    <div>
+                        <label class="text-sm text-gray-300">Valor (R$)</label>
+                        <input type="number" id="trans-amount" placeholder="Ex: 50.00" step="0.01">
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-300">Descrição</label>
+                        <input type="text" id="trans-desc" placeholder="Ex: Mercado, Salário...">
+                    </div>
+                    <div id="category-container">
+                        <label class="text-sm text-gray-300">Categoria</label>
+                        <select id="trans-category">
+                            <option value="Alimentação">🍕 Alimentação</option>
+                            <option value="Transporte">🚗 Transporte</option>
+                            <option value="Lazer">🎬 Lazer</option>
+                            <option value="Outros">🛍️ Outros</option>
+                        </select>
+                    </div>
+                    <button onclick="saveTransaction()" class="bg-[#b366ff] text-black font-bold py-3 px-6 rounded-xl w-full btn-hover mt-4">Confirmar</button>
+                </div>
             </div>
         </div>
         
@@ -211,68 +228,182 @@
     </div>
 
     <script>
-        // Logica das Abas
+        // --- ESTADO DO APP ---
+        let balance = 4250.00;
+        let transactions = [
+            { id: 1, type: 'expense', desc: 'iFood', category: 'Alimentação', amount: 45.90, icon: '🍕', color: 'red' },
+            { id: 2, type: 'income', desc: 'Pix Recebido', category: 'Transferência', amount: 150.00, icon: '💰', color: 'green' },
+            { id: 3, type: 'expense', desc: 'Netflix', category: 'Lazer', amount: 39.90, icon: '🎬', color: 'red' }
+        ];
+
+        let chart1, chart2;
+
+        // --- FUNÇÕES DE NAVEGAÇÃO ---
         function switchTab(tabId) {
-            // Esconde todas as abas
             document.getElementById('tab-home').classList.add('hidden-tab');
             document.getElementById('tab-charts').classList.add('hidden-tab');
             document.getElementById('tab-profile').classList.add('hidden-tab');
             
-            // Remove cor roxa dos botões de navegação
             document.querySelectorAll('.nav-btn').forEach(el => {
                 el.classList.remove('text-[#b366ff]');
                 el.classList.add('text-gray-500');
             });
 
-            // Mostra a aba correta e colore o botão
             document.getElementById('tab-' + tabId).classList.remove('hidden-tab');
             document.getElementById('nav-' + tabId).classList.remove('text-gray-500');
             document.getElementById('nav-' + tabId).classList.add('text-[#b366ff]');
         }
 
-        // Lógica do Modal
-        function showModal() {
-            document.getElementById('action-modal').classList.remove('hidden');
-        }
-        function closeModal() {
-            document.getElementById('action-modal').classList.add('hidden');
+        function logout() {
+            document.getElementById('main-app').classList.add('hidden-tab');
+            document.getElementById('login-screen').classList.remove('hidden-tab');
         }
 
-        // Configuração do Gráfico (Chart.js)
-        const chartData = {
-            labels: ['Alimentação', 'Transporte', 'Lazer', 'Outros'],
-            datasets: [{
-                data: [45, 25, 20, 10],
-                backgroundColor: [
-                    '#ff4d4d', // Coral Red
-                    '#00ff9d', // Neon Green
-                    '#b366ff', // Neon Purple
-                    '#4a4a52'  // Gray
-                ],
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
+        function login() {
+            document.getElementById('login-screen').classList.add('hidden-tab');
+            document.getElementById('main-app').classList.remove('hidden-tab');
+            switchTab('home');
+        }
+
+        // --- FUNÇÕES DE TRANSAÇÃO ---
+        function openTransactionModal(type) {
+            document.getElementById('trans-type').value = type;
+            document.getElementById('modal-title').innerText = type === 'income' ? 'Adicionar Entrada (+)' : 'Adicionar Gasto (-)';
+            document.getElementById('category-container').style.display = type === 'income' ? 'none' : 'block';
+            document.getElementById('trans-amount').value = '';
+            document.getElementById('trans-desc').value = '';
+            document.getElementById('transaction-modal').classList.remove('hidden');
+        }
+
+        function closeTransactionModal() {
+            document.getElementById('transaction-modal').classList.add('hidden');
+        }
+
+        function saveTransaction() {
+            const type = document.getElementById('trans-type').value;
+            const amountStr = document.getElementById('trans-amount').value;
+            const desc = document.getElementById('trans-desc').value || 'Movimentação';
+            let amount = parseFloat(amountStr);
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('Digite um valor numérico válido.');
+                return;
+            }
+
+            let category = 'Outros';
+            let icon = '🛍️';
+            let color = 'red';
+
+            if (type === 'income') {
+                category = 'Entrada';
+                icon = '💰';
+                color = 'green';
+                balance += amount;
+            } else {
+                category = document.getElementById('trans-category').value;
+                if (category === 'Alimentação') icon = '🍕';
+                if (category === 'Transporte') icon = '🚗';
+                if (category === 'Lazer') icon = '🎬';
+                balance -= amount;
+            }
+
+            const newTx = {
+                id: Date.now(),
+                type: type,
+                desc: desc,
+                category: category,
+                amount: amount,
+                icon: icon,
+                color: color
+            };
+
+            transactions.unshift(newTx); // Adiciona no topo
+            
+            updateUI();
+            closeTransactionModal();
+        }
+
+        // --- ATUALIZAR INTERFACE ---
+        function formatCurrency(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function updateUI() {
+            // Saldo
+            document.getElementById('display-balance').innerText = formatCurrency(balance);
+
+            // Lista de transações
+            const listEl = document.getElementById('transactions-list');
+            listEl.innerHTML = '';
+            
+            transactions.forEach(tx => {
+                const isIncome = tx.type === 'income';
+                const sign = isIncome ? '+' : '-';
+                const textColorClass = isIncome ? 'neon-green-text' : 'neon-red-text';
+                const bgClass = isIncome ? 'bg-green-500/20' : (tx.color === 'blue' ? 'bg-blue-500/20' : 'bg-red-500/20');
+
+                const txHTML = `
+                <div class="flex items-center justify-between p-3 glass-card btn-hover">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full ${bgClass} flex items-center justify-center text-xl">${tx.icon}</div>
+                        <div>
+                            <p class="font-semibold">${tx.desc}</p>
+                            <p class="text-xs text-gray-400">${tx.category}</p>
+                        </div>
+                    </div>
+                    <p class="font-bold ${textColorClass}">${sign} ${formatCurrency(tx.amount)}</p>
+                </div>`;
+                listEl.innerHTML += txHTML;
+            });
+
+            updateCharts();
+        }
+
+        // --- GRÁFICOS ---
+        function getCategoryData() {
+            let data = { 'Alimentação': 0, 'Transporte': 0, 'Lazer': 0, 'Outros': 0 };
+            let hasExpenses = false;
+            
+            transactions.forEach(tx => {
+                if (tx.type === 'expense') {
+                    hasExpenses = true;
+                    if (data[tx.category] !== undefined) {
+                        data[tx.category] += tx.amount;
+                    } else {
+                        data['Outros'] += tx.amount;
+                    }
+                }
+            });
+            
+            // Se não houver gastos, retorna um gráfico zerado visivelmente agradável
+            if (!hasExpenses) return [0, 0, 0, 1];
+            return [data['Alimentação'], data['Transporte'], data['Lazer'], data['Outros']];
+        }
+
+        function updateCharts() {
+            const chartData = {
+                labels: ['Alimentação', 'Transporte', 'Lazer', 'Outros'],
+                datasets: [{
+                    data: getCategoryData(),
+                    backgroundColor: ['#ff4d4d', '#00ff9d', '#b366ff', '#4a4a52'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            };
+
+            const chartOptions = { responsive: true, cutout: '75%', plugins: { legend: { display: false } } };
+
+            if (chart1) chart1.destroy();
+            if (chart2) chart2.destroy();
+
+            chart1 = new Chart(document.getElementById('expensesChart').getContext('2d'), { type: 'doughnut', data: chartData, options: chartOptions });
+            chart2 = new Chart(document.getElementById('expensesChart2').getContext('2d'), { type: 'doughnut', data: chartData, options: chartOptions });
+        }
+
+        // --- INICIALIZAÇÃO ---
+        window.onload = function() {
+            updateUI();
         };
-
-        const chartOptions = {
-            responsive: true,
-            cutout: '75%',
-            plugins: { legend: { display: false } }
-        };
-
-        // Renderiza no Home
-        new Chart(document.getElementById('expensesChart').getContext('2d'), {
-            type: 'doughnut',
-            data: chartData,
-            options: chartOptions
-        });
-
-        // Renderiza na aba Gráficos
-        new Chart(document.getElementById('expensesChart2').getContext('2d'), {
-            type: 'doughnut',
-            data: chartData,
-            options: chartOptions
-        });
     </script>
 </body>
 </html>
